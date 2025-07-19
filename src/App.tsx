@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { RefreshCw, Bot, Key } from 'lucide-react';
 import Header from './components/Header';
 import RegionalMap from './components/RegionalMap';
+import RegionalMapView from './components/RegionalMapView';
 import IntensityChart from './components/IntensityChart';
 import GenerationMix from './components/GenerationMix';
 import HistoricalChart from './components/HistoricalChart';
@@ -264,6 +265,7 @@ function App() {
           <HistoricalChart historicalData={historicalData} isLoading={loading} />
         </div>
 
+        <RegionalMapView regionalData={regionalData} isLoading={loading} />
         <RegionalMap regionalData={regionalData} isLoading={loading} />
       </main>
 
