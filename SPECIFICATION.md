@@ -292,10 +292,12 @@ npm run preview
 - **User Feedback**: Feature requests and bug reports
 
 ### Future Enhancements
-- **Historical Data**: Past carbon intensity trends
 - **Notifications**: Browser notifications for optimal times
 - **Export Features**: Data export capabilities
 - **Advanced Analytics**: Detailed energy insights
+
+### Recently Added
+- **Historical Data**: Past 24-hour carbon intensity trends
 
 ## 📞 Support & Documentation
 

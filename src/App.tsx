@@ -4,14 +4,16 @@ import Header from './components/Header';
 import RegionalMap from './components/RegionalMap';
 import IntensityChart from './components/IntensityChart';
 import GenerationMix from './components/GenerationMix';
+import HistoricalChart from './components/HistoricalChart';
 import AIAssistant from './components/AIAssistant';
 import Footer from './components/Footer';
 import { CarbonIntensity, RegionalData, GenerationMix as GenerationMixType } from './types/carbon';
-import { getCurrentIntensity, getIntensityForecast, getRegionalData, getGenerationMix } from './utils/api';
+import { getCurrentIntensity, getIntensityForecast, getHistoricalIntensity, getRegionalData, getGenerationMix } from './utils/api';
 
 function App() {
   const [currentData, setCurrentData] = useState<CarbonIntensity | null>(null);
   const [forecastData, setForecastData] = useState<CarbonIntensity[]>([]);
+  const [historicalData, setHistoricalData] = useState<CarbonIntensity[]>([]);
   const [regionalData, setRegionalData] = useState<RegionalData[]>([]);
   const [generationData, setGenerationData] = useState<GenerationMixType[]>([]);
   const [loading, setLoading] = useState(true);
@@ -58,9 +60,10 @@ function App() {
   const fetchAllData = async () => {
     setLoading(true);
     try {
-      const [current, forecast, regional, generation] = await Promise.all([
+      const [current, forecast, historical, regional, generation] = await Promise.all([
         getCurrentIntensity(),
         getIntensityForecast(48), // Request 48 hours of forecast data
+        getHistoricalIntensity(24),
         getRegionalData(),
         getGenerationMix()
       ]);
@@ -73,6 +76,10 @@ function App() {
 
       if (forecast?.data) {
         setForecastData(forecast.data);
+      }
+
+      if (historical?.data) {
+        setHistoricalData(historical.data);
       }
 
       if (regional?.data?.[0]?.regions) {
@@ -251,9 +258,10 @@ function App() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <IntensityChart forecastData={forecastData} isLoading={loading} />
           <GenerationMix generationData={generationData} isLoading={loading} />
+          <HistoricalChart historicalData={historicalData} isLoading={loading} />
         </div>
 
         <RegionalMap regionalData={regionalData} isLoading={loading} />

@@ -36,6 +36,23 @@ export async function getIntensityForecast(hours = 48) {
   }
 }
 
+export async function getHistoricalIntensity(hours = 24) {
+  try {
+    const now = new Date();
+    const startDate = new Date(now.getTime() - hours * 60 * 60 * 1000);
+
+    const fromDate = startDate.toISOString().split('.')[0] + 'Z';
+    const toDate = now.toISOString().split('.')[0] + 'Z';
+
+    const response = await fetch(`${BASE_URL}/intensity/${fromDate}/${toDate}`);
+    if (!response.ok) throw new Error('Failed to fetch historical data');
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching historical data:', error);
+    return null;
+  }
+}
+
 export async function getRegionalData() {
   try {
     const response = await fetch(`${BASE_URL}/regional`);
