@@ -16,3 +16,7 @@ npm run dev
 The project includes a GitHub Actions workflow that builds the app and deploys it to **GitHub Pages** whenever changes are pushed to the `main` branch. The built files are served from the `dist` directory with the base path set to `/carbon-intensity-app/`.
 
 To manually trigger a deployment, you can also run the workflow from the GitHub Actions tab.
+
+## Pull Request Previews
+
+When a pull request is opened, a GitHub Actions workflow builds the branch and deploys it to the `gh-pages` branch under `pr-<number>`. The workflow comments on the PR with a link to view the preview.
