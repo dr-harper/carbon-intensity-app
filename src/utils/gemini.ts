@@ -1,5 +1,7 @@
 const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent';
 
+import { CarbonIntensity, RegionalData, GenerationMix } from '../types/carbon';
+
 export interface GeminiResponse {
   candidates: {
     content: {
@@ -10,15 +12,17 @@ export interface GeminiResponse {
   }[];
 }
 
+export interface GeminiContext {
+  currentIntensity: number;
+  renewablePercentage: number;
+  forecastData: CarbonIntensity[];
+  regionalData: RegionalData[];
+  generationData: GenerationMix[];
+}
+
 export async function generateGeminiResponse(
   userMessage: string,
-  context: {
-    currentIntensity: number;
-    renewablePercentage: number;
-    forecastData: any[];
-    regionalData: any[];
-    generationData: any[];
-  },
+  context: GeminiContext,
   userApiKey?: string | null
 ): Promise<string> {
   // Get API key from environment or user input
@@ -161,7 +165,7 @@ Try asking me again in a moment, or ask about specific topics like EV charging, 
   }
 }
 
-function analyzeForecastData(forecastData: any[]): string {
+function analyzeForecastData(forecastData: CarbonIntensity[]): string {
   if (!forecastData || forecastData.length === 0) {
     return "No forecast data available";
   }
@@ -212,7 +216,11 @@ ${forecastData
   .join('\n')}`;
 }
 
-function generateFallbackAnalysis(context: any): string {
+function generateFallbackAnalysis(context: {
+  currentIntensity: number;
+  renewablePercentage: number;
+  forecastData: CarbonIntensity[];
+}): string {
   const { currentIntensity, renewablePercentage, forecastData } = context;
   
   if (!forecastData || forecastData.length === 0) {
@@ -229,11 +237,11 @@ ${currentIntensity < 200
   }
 
   const next24Hours = forecastData.slice(0, 24);
-  const minIntensity = Math.min(...next24Hours.map((d: any) => d.intensity.forecast));
-  const maxIntensity = Math.max(...next24Hours.map((d: any) => d.intensity.forecast));
-  
-  const bestTime = next24Hours.find((d: any) => d.intensity.forecast === minIntensity);
-  const worstTime = next24Hours.find((d: any) => d.intensity.forecast === maxIntensity);
+  const minIntensity = Math.min(...next24Hours.map((d: CarbonIntensity) => d.intensity.forecast));
+  const maxIntensity = Math.max(...next24Hours.map((d: CarbonIntensity) => d.intensity.forecast));
+
+  const bestTime = next24Hours.find((d: CarbonIntensity) => d.intensity.forecast === minIntensity);
+  const worstTime = next24Hours.find((d: CarbonIntensity) => d.intensity.forecast === maxIntensity);
   
   const formatTime = (dateStr: string) => {
     return new Date(dateStr).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });

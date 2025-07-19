@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Bot, Send, Mic, MicOff, Sparkles, Lightbulb, Zap, AlertCircle } from 'lucide-react';
+import { Bot, Send, Mic, MicOff, Sparkles, AlertCircle } from 'lucide-react';
 import { CarbonIntensity, RegionalData, GenerationMix } from '../types/carbon';
 import { generateGeminiResponse } from '../utils/gemini';
 
@@ -147,7 +147,7 @@ What would you like to know about UK energy today and tomorrow?`,
       const aiResponseText = await generateGeminiResponse(currentInput, context, userApiKey);
       
       // Generate smart suggestions based on the response
-      const suggestions = generateSmartSuggestions(currentInput, aiResponseText);
+      const suggestions = generateSmartSuggestions(currentInput);
 
       const aiResponse: Message = {
         id: (Date.now() + 1).toString(),
@@ -179,9 +179,8 @@ What would you like to know about UK energy today and tomorrow?`,
     }
   };
 
-  const generateSmartSuggestions = (userInput: string, aiResponse: string): string[] => {
+  const generateSmartSuggestions = (userInput: string): string[] => {
     const input = userInput.toLowerCase();
-    const response = aiResponse.toLowerCase();
 
     if (input.includes('48') || input.includes('2 days') || input.includes('tomorrow')) {
       return [
