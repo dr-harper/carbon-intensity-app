@@ -46,40 +46,26 @@ export default function RegionalMap({ regionalData, isLoading }: RegionalMapProp
         </div>
       </div>
 
-      {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-        <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-6 rounded-xl border border-green-200">
-          <div className="flex items-center justify-between">
-            <div>
-              <div className="flex items-center gap-2 mb-2">
-                <TrendingDown className="w-5 h-5 text-green-600" />
-                <span className="font-semibold text-green-800">Cleanest Region</span>
-              </div>
-              <h3 className="text-xl font-bold text-green-900">{bestRegion?.dnoregion}</h3>
-              <p className="text-sm text-green-700">{bestRegion?.shortname}</p>
-            </div>
-            <div className="text-right">
-              <div className="text-3xl font-bold text-green-600">{bestRegion?.intensity.forecast}</div>
-              <div className="text-xs text-green-600">gCO₂/kWh</div>
-            </div>
+      {/* Compact summary */}
+      <div className="grid grid-cols-3 gap-4 mb-6 text-center text-sm">
+        <div>
+          <div className="font-medium flex items-center justify-center gap-1 mb-1 text-green-700">
+            <TrendingDown className="w-4 h-4" /> Cleanest
           </div>
+          <div className="font-bold text-green-600 text-lg">{bestRegion?.intensity.forecast}</div>
+          <div className="text-gray-600 text-xs">{bestRegion?.shortname}</div>
         </div>
-
-        <div className="bg-gradient-to-r from-red-50 to-orange-50 p-6 rounded-xl border border-red-200">
-          <div className="flex items-center justify-between">
-            <div>
-              <div className="flex items-center gap-2 mb-2">
-                <TrendingUp className="w-5 h-5 text-red-600" />
-                <span className="font-semibold text-red-800">Highest Intensity</span>
-              </div>
-              <h3 className="text-xl font-bold text-red-900">{worstRegion?.dnoregion}</h3>
-              <p className="text-sm text-red-700">{worstRegion?.shortname}</p>
-            </div>
-            <div className="text-right">
-              <div className="text-3xl font-bold text-red-600">{worstRegion?.intensity.forecast}</div>
-              <div className="text-xs text-red-600">gCO₂/kWh</div>
-            </div>
+        <div>
+          <div className="font-medium text-gray-700 mb-1">UK Avg</div>
+          <div className="font-bold text-gray-900 text-lg">{averageIntensity.toFixed(0)}</div>
+          <div className="text-gray-600 text-xs">gCO₂/kWh</div>
+        </div>
+        <div>
+          <div className="font-medium flex items-center justify-center gap-1 mb-1 text-red-700">
+            <TrendingUp className="w-4 h-4" /> Highest
           </div>
+          <div className="font-bold text-red-600 text-lg">{worstRegion?.intensity.forecast}</div>
+          <div className="text-gray-600 text-xs">{worstRegion?.shortname}</div>
         </div>
       </div>
 
@@ -174,57 +160,17 @@ export default function RegionalMap({ regionalData, isLoading }: RegionalMapProp
         })}
       </div>
 
-      {/* Enhanced Legend */}
-      <div className="bg-gradient-to-r from-gray-50 to-blue-50 p-6 rounded-xl border border-gray-200">
-        <div className="flex items-center justify-between mb-4">
-          <h4 className="font-semibold text-gray-900 text-lg">Carbon Intensity Scale</h4>
-          <div className="text-sm text-gray-600">
-            Difference: {(worstRegion?.intensity.forecast - bestRegion?.intensity.forecast).toFixed(0)} gCO₂/kWh
-          </div>
-        </div>
-        
-        <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-4">
-          <div className="flex items-center gap-2 p-2 bg-green-100 rounded-lg">
-            <div className="w-4 h-4 rounded-full bg-green-500"></div>
-            <div>
-              <div className="text-xs font-medium text-green-800">Very Low</div>
-              <div className="text-xs text-green-600">&lt;100</div>
-            </div>
-          </div>
-          <div className="flex items-center gap-2 p-2 bg-emerald-100 rounded-lg">
-            <div className="w-4 h-4 rounded-full bg-emerald-500"></div>
-            <div>
-              <div className="text-xs font-medium text-emerald-800">Low</div>
-              <div className="text-xs text-emerald-600">100-200</div>
-            </div>
-          </div>
-          <div className="flex items-center gap-2 p-2 bg-yellow-100 rounded-lg">
-            <div className="w-4 h-4 rounded-full bg-yellow-500"></div>
-            <div>
-              <div className="text-xs font-medium text-yellow-800">Moderate</div>
-              <div className="text-xs text-yellow-600">200-300</div>
-            </div>
-          </div>
-          <div className="flex items-center gap-2 p-2 bg-orange-100 rounded-lg">
-            <div className="w-4 h-4 rounded-full bg-orange-500"></div>
-            <div>
-              <div className="text-xs font-medium text-orange-800">High</div>
-              <div className="text-xs text-orange-600">300-400</div>
-            </div>
-          </div>
-          <div className="flex items-center gap-2 p-2 bg-red-100 rounded-lg">
-            <div className="w-4 h-4 rounded-full bg-red-500"></div>
-            <div>
-              <div className="text-xs font-medium text-red-800">Very High</div>
-              <div className="text-xs text-red-600">&gt;400</div>
-            </div>
-          </div>
-        </div>
-
-        <div className="text-center">
-          <p className="text-sm text-gray-600">
-            💡 <strong>Tip:</strong> Consider moving energy-intensive activities to regions with lower carbon intensity when possible
-          </p>
+      {/* Compact scale */}
+      <div className="border-t pt-4">
+        <p className="text-center text-xs text-gray-600 mb-2">
+          Difference: {(worstRegion?.intensity.forecast - bestRegion?.intensity.forecast).toFixed(0)} gCO₂/kWh
+        </p>
+        <div className="flex flex-wrap justify-center gap-2 text-xs">
+          <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-green-500"></span>Very Low</span>
+          <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-emerald-500"></span>Low</span>
+          <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-yellow-500"></span>Moderate</span>
+          <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-orange-500"></span>High</span>
+          <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-red-500"></span>Very High</span>
         </div>
       </div>
     </div>
