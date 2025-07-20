@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { RefreshCw, Bot, Key } from 'lucide-react';
+import { RefreshCw, Bot, Key, MapPin, Check, X } from 'lucide-react';
 import Header from './components/Header';
 import RegionalMap from './components/RegionalMap';
 import IntensityChart from './components/IntensityChart';
@@ -21,6 +21,8 @@ function App() {
   const [showApiKeyPrompt, setShowApiKeyPrompt] = useState(false);
   const [apiKeyInput, setApiKeyInput] = useState('');
   const [userApiKey, setUserApiKey] = useState<string | null>(null);
+  const [locationEnabled, setLocationEnabled] = useState(false);
+  const [showLocationPrompt, setShowLocationPrompt] = useState(false);
 
   // Check for API key from environment or user input
   const hasGeminiKey = import.meta.env.VITE_GEMINI_API_KEY || userApiKey;
@@ -31,7 +33,15 @@ function App() {
     if (savedApiKey) {
       setUserApiKey(savedApiKey);
     }
+    const savedLocation = localStorage.getItem('location_enabled');
+    if (savedLocation === 'true') {
+      setLocationEnabled(true);
+    }
   }, []);
+
+  useEffect(() => {
+    localStorage.setItem('location_enabled', String(locationEnabled));
+  }, [locationEnabled]);
 
   const handleSaveApiKey = () => {
     if (apiKeyInput.trim()) {
@@ -55,6 +65,25 @@ function App() {
     localStorage.removeItem('gemini_api_key');
     setUserApiKey(null);
     setApiKeyInput('');
+  };
+
+  const requestLocation = () => {
+    if (!locationEnabled) {
+      setShowLocationPrompt(true);
+    }
+  };
+
+  const enableLocation = () => {
+    navigator.geolocation.getCurrentPosition(
+      () => {
+        setLocationEnabled(true);
+        setShowLocationPrompt(false);
+      },
+      () => {
+        alert('Unable to retrieve your location');
+        setShowLocationPrompt(false);
+      }
+    );
   };
 
   const fetchAllData = async () => {
@@ -268,9 +297,32 @@ function App() {
       </main>
 
       <Footer />
-      
+
+      {/* Location Toggle */}
+      <div className="fixed bottom-6 right-24 z-50">
+        <button
+          onClick={requestLocation}
+          className="bg-gradient-to-r from-emerald-600 to-blue-600 text-white p-4 rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 group relative"
+        >
+          <MapPin className="w-6 h-6 group-hover:animate-pulse" />
+          <div className={`absolute -top-2 -right-2 text-white text-xs rounded-full w-6 h-6 flex items-center justify-center ${locationEnabled ? 'bg-emerald-500' : 'bg-red-500'}`}> 
+            {locationEnabled ? <Check className="w-3 h-3" /> : <X className="w-3 h-3" />}
+          </div>
+        </button>
+      </div>
+
+      {showLocationPrompt && (
+        <div className="fixed bottom-24 right-6 bg-white p-4 rounded-xl shadow-lg border z-50 w-80">
+          <p className="text-sm mb-4">Granting location access will pick regional team names.</p>
+          <div className="flex justify-end gap-2">
+            <button onClick={() => setShowLocationPrompt(false)} className="px-3 py-1 text-sm rounded-md bg-gray-100 hover:bg-gray-200">Cancel</button>
+            <button onClick={enableLocation} className="px-3 py-1 text-sm rounded-md bg-emerald-600 text-white hover:bg-emerald-700">Allow</button>
+          </div>
+        </div>
+      )}
+
       {/* AI Assistant */}
-      <AIAssistant 
+      <AIAssistant
         currentData={currentData}
         forecastData={forecastData}
         regionalData={regionalData}
